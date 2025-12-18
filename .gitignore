@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Generated images
+*.png
+*.jpg
+*.jpeg
+
+# Stable diffusion heavy folder
+stable-diffusion-webui/
+
+# OS files
+.DS_Store
+

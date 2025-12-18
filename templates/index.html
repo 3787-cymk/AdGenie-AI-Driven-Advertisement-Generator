@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pamphlet Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-robot"></i> AI Pamphlet Generator</h1>
+                <p>Create stunning product pamphlets with AI-powered text and image generation</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="form-container">
+                <form id="pamphletForm" class="pamphlet-form">
+                    <div class="form-section">
+                        <h2><i class="fas fa-edit"></i> Product Information</h2>
+                        
+                        <div class="form-group">
+                            <label for="product_name">Product Name *</label>
+                            <input type="text" id="product_name" name="product_name" required 
+                                   placeholder="e.g., EcoClean Pro">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Product Description *</label>
+                            <textarea id="description" name="description" required 
+                                      placeholder="Describe your product in detail..."></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tone">Tone *</label>
+                                <select id="tone" name="tone" required>
+                                    <option value="professional">Professional</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="friendly">Friendly</option>
+                                    <option value="luxury">Luxury</option>
+                                    <option value="playful">Playful</option>
+                                    <option value="serious">Serious</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="target_audience">Target Audience *</label>
+                                <input type="text" id="target_audience" name="target_audience" required 
+                                       placeholder="e.g., health-conscious families">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-star"></i> Key Features</h2>
+                        <div id="features-container">
+                            <div class="feature-input">
+                                <input type="text" class="feature-input-field" placeholder="Enter a key feature...">
+                                <button type="button" class="remove-feature" onclick="removeFeature(this)" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="add-feature-btn" onclick="addFeature()">
+                            <i class="fas fa-plus"></i> Add Feature
+                        </button>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-bullhorn"></i> Call to Action</h2>
+                        <div class="form-group">
+                            <label for="call_to_action">Call to Action *</label>
+                            <input type="text" id="call_to_action" name="call_to_action" required 
+                                   placeholder="e.g., Order now and get 20% off!">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-palette"></i> Design Options</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="color_scheme">Color Scheme</label>
+                                <select id="color_scheme" name="color_scheme">
+                                    <option value="modern">Modern</option>
+                                    <option value="elegant">Elegant</option>
+                                    <option value="minimal">Minimal</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="style">Style</label>
+                                <select id="style" name="style">
+                                    <option value="professional">Professional</option>
+                                    <option value="creative">Creative</option>
+                                    <option value="minimalist">Minimalist</option>
+                                    <option value="vintage">Vintage</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-image"></i> Image Customization</h2>
+                        
+                        <div class="form-group">
+                            <label>Choose Image Source</label>
+                            <div class="image-source-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="image_source" value="ai_generated" checked>
+                                    <span>AI Generated Image</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="image_source" value="custom_upload">
+                                    <span>Upload Custom Image</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="aiImageGroup">
+                            <label for="image_prompt">Custom Image Prompt (Optional)</label>
+                            <textarea id="image_prompt" name="image_prompt" 
+                                      placeholder="Describe how you want your pamphlet image to look... (e.g., 'Warm golden lighting, cookies on a wooden table, cozy bakery atmosphere')"></textarea>
+                            <small style="color: #666; font-size: 0.9rem; margin-top: 5px; display: block;">
+                                Leave empty to use AI-generated prompts based on your product description
+                            </small>
+                        </div>
+                        
+                        <div class="form-group" id="customImageGroup" style="display: none;">
+                            <label for="custom_image">Upload Custom Image</label>
+                            <div class="file-upload-container">
+                                <input type="file" id="custom_image" name="custom_image" accept="image/*" style="display: none;">
+                                <button type="button" class="file-upload-btn" onclick="document.getElementById('custom_image').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i> Choose Image
+                                </button>
+                                <span class="file-name" id="fileName">No file selected</span>
+                            </div>
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImage" src="" alt="Preview">
+                                <button type="button" class="remove-image-btn" onclick="removeCustomImage()">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                            <small style="color: #666; font-size: 0.9rem; margin-top: 5px; display: block;">
+                                Supported formats: JPG, PNG, GIF. Max size: 10MB
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="generate-btn" id="generateBtn">
+                            <i class="fas fa-magic"></i> Generate Pamphlet
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-container" id="resultsContainer" style="display: none;">
+                <h2><i class="fas fa-image"></i> Generated Pamphlet</h2>
+                
+                <!-- Editing Controls -->
+                <div class="editing-controls">
+                    <div class="control-tabs">
+                        <button class="control-tab active" data-tab="layout">
+                            <i class="fas fa-th-large"></i> Layout
+                        </button>
+                        <button class="control-tab" data-tab="text">
+                            <i class="fas fa-font"></i> Text
+                        </button>
+                        <button class="control-tab" data-tab="image">
+                            <i class="fas fa-image"></i> Image
+                        </button>
+                        <button class="control-tab" data-tab="effects">
+                            <i class="fas fa-magic"></i> Effects
+                        </button>
+                    </div>
+                    
+                    <!-- Layout Controls -->
+                    <div class="control-panel" id="layout-panel">
+                        <div class="control-group">
+                            <label>Pamphlet Size</label>
+                            <select id="pamphletSize">
+                                <option value="1200x1600">Standard (3:4)</option>
+                                <option value="1200x1800">Tall (2:3)</option>
+                                <option value="1200x1200">Square (1:1)</option>
+                                <option value="1600x1200">Wide (4:3)</option>
+                                <option value="custom">Custom Size</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group" id="customSizeGroup" style="display: none;">
+                            <label>Custom Dimensions</label>
+                            <div class="size-inputs">
+                                <input type="number" id="customWidth" placeholder="Width" value="1200">
+                                <span>x</span>
+                                <input type="number" id="customHeight" placeholder="Height" value="1600">
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Layout Style</label>
+                            <select id="layoutStyle">
+                                <option value="centered">Centered</option>
+                                <option value="left-aligned">Left Aligned</option>
+                                <option value="right-aligned">Right Aligned</option>
+                                <option value="split">Split Layout</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group">
+                            <label>Text Vertical Position</label>
+                            <select id="textPlacement">
+                                <option value="top">Top</option>
+                                <option value="middle">Center</option>
+                                <option value="bottom">Bottom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Background Opacity</label>
+                            <input type="range" id="backgroundOpacity" min="0" max="100" value="80">
+                            <span id="opacityValue">80%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Controls -->
+                    <div class="control-panel" id="text-panel" style="display: none;">
+                        <div class="control-group">
+                            <label>Headline Font</label>
+                            <select id="headlineFont">
+                                <option value="Arial-Bold">Arial Bold</option>
+                                <option value="Helvetica-Bold">Helvetica Bold</option>
+                                <option value="Times-Bold">Times Bold</option>
+                                <option value="Georgia-Bold">Georgia Bold</option>
+                                <option value="Verdana-Bold">Verdana Bold</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Headline Size</label>
+                            <input type="range" id="headlineSize" min="24" max="120" value="72">
+                            <span id="headlineSizeValue">72px</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Headline Color</label>
+                            <input type="color" id="headlineColor" value="#ffffff">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Body Font</label>
+                            <select id="bodyFont">
+                                <option value="Arial">Arial</option>
+                                <option value="Helvetica">Helvetica</option>
+                                <option value="Times">Times</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="Verdana">Verdana</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Body Size</label>
+                            <input type="range" id="bodySize" min="12" max="48" value="28">
+                            <span id="bodySizeValue">28px</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Body Color</label>
+                            <input type="color" id="bodyColor" value="#ffffff">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>CTA Background Color</label>
+                            <input type="color" id="ctaBgColor" value="#ff6464">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>CTA Text Color</label>
+                            <input type="color" id="ctaTextColor" value="#ffffff">
+                        </div>
+                    </div>
+                    
+                    <!-- Image Controls -->
+                    <div class="control-panel" id="image-panel" style="display: none;">
+                        <div class="control-group">
+                            <label>Image Filters</label>
+                            <select id="imageFilter">
+                                <option value="none">No Filter</option>
+                                <option value="brightness">Brightness</option>
+                                <option value="contrast">Contrast</option>
+                                <option value="saturate">Saturate</option>
+                                <option value="blur">Blur</option>
+                                <option value="sepia">Sepia</option>
+                                <option value="grayscale">Grayscale</option>
+                            </select>
+                        </div>
+                        
+                        <div class="control-group" id="filterIntensityGroup" style="display: none;">
+                            <label>Filter Intensity</label>
+                            <input type="range" id="filterIntensity" min="0" max="100" value="50">
+                            <span id="filterIntensityValue">50%</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Image Crop</label>
+                            <div class="crop-controls">
+                                <button class="crop-btn" data-crop="none">No Crop</button>
+                                <button class="crop-btn" data-crop="square">Square</button>
+                                <button class="crop-btn" data-crop="portrait">Portrait</button>
+                                <button class="crop-btn" data-crop="landscape">Landscape</button>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Image Position</label>
+                            <select id="imagePosition">
+                                <option value="center">Center</option>
+                                <option value="top">Top</option>
+                                <option value="bottom">Bottom</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Effects Controls -->
+                    <div class="control-panel" id="effects-panel" style="display: none;">
+                        <div class="control-group">
+                            <label>Shadow Effect</label>
+                            <input type="range" id="shadowIntensity" min="0" max="100" value="0">
+                            <span id="shadowIntensityValue">0%</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Border Radius</label>
+                            <input type="range" id="borderRadius" min="0" max="50" value="12">
+                            <span id="borderRadiusValue">12px</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Text Shadow</label>
+                            <input type="range" id="textShadow" min="0" max="100" value="0">
+                            <span id="textShadowValue">0%</span>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>Overall Brightness</label>
+                            <input type="range" id="overallBrightness" min="50" max="150" value="100">
+                            <span id="overallBrightnessValue">100%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pamphlet-preview">
+                    <div class="preview-container">
+                        <img id="pamphletImage" src="" alt="Generated Pamphlet">
+                        <div class="preview-overlay" id="previewOverlay">
+                            <div class="overlay-content" id="overlayContent">
+                                <div class="overlay-headline" id="previewHeadline"></div>
+                                <div class="overlay-tagline" id="previewTagline"></div>
+                                <div class="overlay-description" id="previewDescription"></div>
+                                <div class="overlay-cta" id="previewCTA"></div>
+                                <div class="overlay-description" id="previewCustom" style="font-size: 20px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pamphlet-actions">
+                    <button class="download-btn" onclick="downloadPamphlet()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="regenerate-btn" onclick="regeneratePamphlet()">
+                        <i class="fas fa-redo"></i> Regenerate
+                    </button>
+                    <button class="save-edits-btn" onclick="saveEditedPamphlet()">
+                        <i class="fas fa-save"></i> Save Edits
+                    </button>
+                    <button class="reset-edits-btn" onclick="resetEdits()">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+                <p class="regen-note">
+                    Each regeneration remixes the copy, layout, and background so you can explore fresh creative directions automatically.
+                </p>
+                
+                <!-- Generated Text Content -->
+                <div class="text-content" id="textContent" style="display: none;">
+                    <h3>Generated Content</h3>
+                    <div class="content-section" style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <label><input type="checkbox" id="toggleHeadline"> Hide headline</label>
+                        <label><input type="checkbox" id="toggleTagline"> Hide tagline</label>
+                        <label><input type="checkbox" id="toggleDescription"> Hide description</label>
+                        <label><input type="checkbox" id="toggleCTA"> Hide CTA</label>
+                        <label><input type="checkbox" id="toggleCustom"> Hide custom text</label>
+                    </div>
+                    <div class="content-section">
+                        <h4>Headline:</h4>
+                        <p id="generatedHeadline"></p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Tagline:</h4>
+                        <p id="generatedTagline"></p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Description:</h4>
+                        <p id="generatedDescription"></p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Call to Action:</h4>
+                        <p id="generatedCTA"></p>
+                    </div>
+                    <div class="content-section">
+                        <h4>Custom Text (one line per row):</h4>
+                        <textarea id="customTextInput" placeholder="Add custom lines to include in the final design..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h3>Generating Your Pamphlet...</h3>
+                <p>Our AI agents are working hard to create the perfect pamphlet for you!</p>
+                <div class="loading-steps">
+                    <div class="step active">
+                        <i class="fas fa-brain"></i>
+                        <span>Generating text with Ollama</span>
+                    </div>
+                    <div class="step">
+                        <i class="fas fa-paint-brush"></i>
+                        <span>Creating image with Stable Diffusion</span>
+                    </div>
+                    <div class="step">
+                        <i class="fas fa-magic"></i>
+                        <span>Designing final pamphlet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
