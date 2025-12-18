@@ -273,3 +273,7 @@ If you encounter any issues or have questions:
 # AdGenie-AI-Driven-Advertisement-Generator
 AdGenie is an AI-powered system that automatically creates complete advertisements — including text ad copy, poster images, using just basic product details like name, target audience, and tone. It is designed especially to help small and medium businesses create professional, creative, and personalized ads effortlessly using Generative AI
 >>>>>>> a9f002c8bbaa8a281cd1d9b8673b3d1ad6983f2a
+>>>>>>> ## 🎥 Project Demo Video
+>>>>>>> ▶️ Watch full demo here: 
+>>>>>>> https://drive.google.com/file/d/1RSI1J6fPILkXSj-gHQY1rXUEQq9xc7An/view?usp=drive_link
+
