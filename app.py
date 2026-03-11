@@ -12,7 +12,7 @@ import json
 app = Flask(__name__)
 
 
-STABILITY_API_KEY = "sk-yOveJUr42rXpmcP9577FZtprJk5guzQW8CN7Ofq4FQQZdFzR"
+STABILITY_API_KEY = "YOUR_API_KEY"
 
 if STABILITY_API_KEY == "your_stability_api_key_here":
     print("⚠️  WARNING: Please set your Stability AI API key in app.py")
